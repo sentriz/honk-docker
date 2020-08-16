@@ -1,0 +1,22 @@
+#!/bin/sh
+
+honk() {
+	command honk \
+		-datadir "$HONK_DATA_DIR" \
+		-viewdir "$HONK_VIEW_DIR" \
+		"$@"
+}
+
+if [ ! -f "$HONK_DATA_DIR/honk.db" ]; then
+	honk init <<-EOF
+	$HONK_USERNAME
+	$HONK_PASSWORD
+	$HONK_LISTEN_ADDR
+	$HONK_SERVER_NAME
+	EOF
+        sqlite3 "$HONK_DATA_DIR/honk.db" \
+            "insert into 'config' values ('masqname', '$HONK_MASQNAME')"
+fi
+
+honk upgrade
+honk
