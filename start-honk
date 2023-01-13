@@ -7,15 +7,19 @@ honk() {
 		"$@"
 }
 
+if [ -f "$HONK_DATA_DIR/honk.db" ] && [ ! -s "$HONK_DATA_DIR/honk.db" ]; then
+	rm "$HONK_DATA_DIR/honk.db"
+fi
 if [ ! -f "$HONK_DATA_DIR/honk.db" ]; then
-	honk init <<-EOF
+	honk init <<-EOF || exit 1
 	$HONK_USERNAME
 	$HONK_PASSWORD
 	$HONK_LISTEN_ADDR
 	$HONK_SERVER_NAME
 	EOF
-        sqlite3 "$HONK_DATA_DIR/honk.db" \
-            "insert into 'config' values ('masqname', '$HONK_MASQNAME')"
+	[ -n "$HONK_MASQNAME" ] &&
+	    sqlite3 "$HONK_DATA_DIR/honk.db" \
+	    "insert into 'config' values ('masqname', '$HONK_MASQNAME')"
 fi
 
 honk upgrade
