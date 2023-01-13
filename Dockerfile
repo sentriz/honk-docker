@@ -1,7 +1,7 @@
-FROM golang:1.14-alpine AS builder
+FROM golang:1.19-alpine AS builder
 RUN apk add sqlite-dev build-base
 
-ENV HONK_VERSION honk-0.9.2
+ENV HONK_VERSION honk-0.9.8
 
 WORKDIR /tmp/src
 RUN wget "https://humungus.tedunangst.com/r/honk/d/${HONK_VERSION}.tgz" -O honk.tgz
@@ -9,7 +9,7 @@ RUN tar -xvf honk.tgz
 RUN mv "$HONK_VERSION" honk
 RUN cd honk && go build -o /tmp/honk .
 
-FROM alpine:3.12.0
+FROM alpine:3.17.1
 RUN apk add sqlite sqlite-dev
 
 WORKDIR /opt
